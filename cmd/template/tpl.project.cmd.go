@@ -1,0 +1,68 @@
+package template
+
+func init() {
+	CommonProjectFiles["cmd/default.go"] = `// Generate By Template
+package cmd
+
+import (
+	"github.com/urfave/cli"
+)
+
+func Default(c *cli.Context) error {
+	return nil
+}`
+
+	WebProjectFiles["cmd/server.go"] = `// Generate By Template
+package cmd
+
+import (
+	"github.com/chaimch/akita-inu/middlewares"
+	"github.com/chaimch/akita-inu/signals"
+	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
+	"github.com/urfave/cli"
+
+	"{{ .ProjectPath }}/config"
+	"{{ .ProjectPath }}/route"
+)
+
+func Server(c *cli.Context) error {
+	var engine *gin.Engine
+
+	// Set gin release mode.
+	if config.Env.IsProduction() {
+		gin.SetMode(gin.ReleaseMode)
+		engine = gin.New()
+		engine.Use(middlewares.AccessLog(config.Env.LogLevel))
+	} else {
+		engine = gin.Default()
+	}
+
+	// init router
+	route.InitAPIRouter(engine)
+
+	go func() {
+		defer close(signals.SigCompleted)
+		if err := engine.Run(":80"); err != nil {
+			logrus.Fatal(err)
+		}
+	}()
+
+	return signals.WaitForExit(config.Env.IsProduction())
+}`
+
+	WebProjectFiles["cmd/migrations.go"] = `// Generate By Template
+package cmd
+
+import (
+	"github.com/urfave/cli"
+
+	"{{ .ProjectPath }}/config"
+	"{{ .ProjectPath }}/migrations"
+)
+
+func DoMigrate(c *cli.Context) error {
+	return migrations.DoMigrate(config.DB)
+}`
+
+}
