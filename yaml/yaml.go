@@ -291,7 +291,7 @@ func UnmarshalFromFile(filename string, out interface{}) (err error) {
 		return errors.Wrap(err, "read yaml file failed")
 	}
 
-	return Unmarshal(bts, out)
+	return yaml.Unmarshal(bts, out)
 }
 
 func MarshalToFile(filename string, data interface{}) error {
