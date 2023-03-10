@@ -1,7 +1,7 @@
-# Hail akita-inu !!!
+# akita-inu !!!
 
 ## Modules
 - logger
 - json
 - test
-- errors# akita-inu
+- errors
