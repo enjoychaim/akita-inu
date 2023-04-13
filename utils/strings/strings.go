@@ -17,4 +17,3 @@ func ToCapitalized(s string, step string) string {
 	}
 	return strings.Join(words, step)
 }
-g
